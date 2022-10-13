@@ -359,7 +359,7 @@ public class MyList<T> implements List<T>, AuthorHolder {
 
     private int getNewSize() {
         int newSize = items.length < 10 ? 10 : items.length / 2 * 3;
-        if(newSize > maxCapacity || newSize < 0) {
+        if(newSize > maxCapacity) {
             newSize = maxCapacity;
         }
         return newSize;
