@@ -526,46 +526,62 @@ public class MyListTest {
     @DisplayName("Сортировка списка со случайными элементами")
     @Test
     public void randomListSortTest() {
-        int n = 10_000_000;
-        List<Integer> actualList = new MyList<>(n);
-        Random random = new Random();
-        for(int i = 0; i < n; i++) {
-            actualList.add(random.nextInt(n));
+        int times = 10;
+        List<Long> myTimes = new ArrayList<>(times);
+        List<Long> standardTimes = new ArrayList<>(times);
+        for(int k = 1; k <= times; k++) {
+            int n = 10_000_000;
+            int upperBound = 10_000_000;
+            List<Integer> actualList = new MyList<>(n);
+            Random random = new Random();
+            for(int i = 0; i < n; i++) {
+                actualList.add(random.nextInt(upperBound));
+            }
+            List<Integer> expectedList = new ArrayList<>(actualList);
+            long start = System.currentTimeMillis();
+            expectedList.sort(Integer::compareTo);
+            long end = System.currentTimeMillis();
+            standardTimes.add(end - start);
+            System.out.printf("Время стандартной сортировки : %d%n", end - start);
+
+            start = System.currentTimeMillis();
+            actualList.sort(Integer::compareTo);
+            end = System.currentTimeMillis();
+            myTimes.add(end - start);
+            System.out.printf("Время моей сортировки : %d%n%n", end - start);
+
+            assertEqualsLists(actualList, expectedList);
         }
-        List<Integer> expectedList = new ArrayList<>(actualList);
-        long start = System.currentTimeMillis();
-        expectedList.sort(Integer::compareTo);
-        long end = System.currentTimeMillis();
-        System.out.printf("Время стандартной сортировки : %d%n", end - start);
-
-        start = System.currentTimeMillis();
-        actualList.sort(Integer::compareTo);
-        end = System.currentTimeMillis();
-        System.out.printf("Время моей сортировки : %d%n", end - start);
-
-        assertEqualsLists(actualList, expectedList);
+        System.out.println("Среднее время моей сортировки: " + myTimes.stream().mapToLong(Long::longValue).sum() / (double)times);
+        System.out.println("Среднее время стандартной сортировки: " + standardTimes.stream().mapToLong(Long::longValue).sum() / (double)times);
     }
 
     @DisplayName("Сортировка списка с элементами в порядке убывания")
     @Test
     public void sortWithDecreaseItemsTest() {
-        int n = 10_000_000;
-        List<Integer> actualList = new MyList<>(n);
-        for(int i = 0; i < n; i++) {
-            actualList.add(n - i);
+        int times = 10;
+        List<Long> sortTimes = new ArrayList<>(times);
+        for(int k = 1; k <= times; k++) {
+            int n = 10_000_000;
+            List<Integer> actualList = new MyList<>(n);
+            for (int i = 0; i < n; i++) {
+                actualList.add(n - i);
+            }
+
+            long start = System.currentTimeMillis();
+            actualList.sort(Integer::compareTo);
+            long end = System.currentTimeMillis();
+            sortTimes.add(end - start);
+            System.out.printf("Время сортировки : %d%n", end - start);
+
+            List<Integer> expectedList = new ArrayList<>(n);
+            for (int i = 1; i <= n; i++) {
+                expectedList.add(i);
+            }
+
+            assertEqualsLists(actualList, expectedList);
         }
-
-        long start = System.currentTimeMillis();
-        actualList.sort(Integer::compareTo);
-        long end = System.currentTimeMillis();
-        System.out.printf("Время сортировки : %d%n", end - start);
-
-        List<Integer> expectedList = new ArrayList<>(n);
-        for(int i = 1; i <= n; i++) {
-            expectedList.add(i);
-        }
-
-        assertEqualsLists(actualList, expectedList);
+        System.out.println("Среднее время сортировки " + sortTimes.stream().mapToLong(Long::longValue).sum() / (double)times);
     }
 
     @DisplayName("Автор списка")
